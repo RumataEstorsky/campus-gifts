@@ -1,5 +1,5 @@
 GET         /                    controllers.Application.index
 POST        /                    controllers.Application.addEmail
-GET         /result              controllers.Application.shuffle
+GET         /result              controllers.Application.result
 
 GET         /assets/*file        controllers.Assets.at(path="/public", file)

@@ -5,6 +5,7 @@ import java.io.{PrintWriter, File}
 import play.api.mvc._
 import views.html._
 import io.Source
+import scala.util.Random
 
 object Application extends Controller {
   val emailsFile = "emails.txt"
@@ -32,18 +33,33 @@ object Application extends Controller {
   }
 
   /** Action shuffle emails and decides presenter pairs */
-  def shuffle = Action {
-    Ok("Перемешаны адреса")
+  def result = Action {
+    val existingEmails = getExistingEmails
+    val randomNumbers = generateRandomNumbers(existingEmails.length, Seq())
+    val order = if(randomNumbers.size % 2 == 0) randomNumbers else randomNumbers :+ randomNumbers.head
+
+    Ok(resultPage(existingEmails, order))
+
   }
 
+  /** load emails from file */
   def getExistingEmails =
     if((new File(emailsFile)).exists) Source.fromFile(emailsFile).getLines().toList
     else List()
 
+  /** save emails to file */
   def saveEmails(emails: List[String]) = {
     val out = new PrintWriter(emailsFile)
     out.write(emails.mkString("\n"))
     out.close()
   }
+
+  /** generate random numbers from 0 to n, without duplicates */
+  def generateRandomNumbers(n: Int, numbers: Seq[Int]): Seq[Int] = {
+    def add(x: Int) = if(numbers.contains(x)) numbers else numbers :+ x
+    if (numbers.length == n) numbers
+    else generateRandomNumbers(n, add(Random.nextInt(n)))
+  }
+
 
 }

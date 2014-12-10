@@ -1,0 +1,21 @@
+@(existingEmails: List[String], order: Seq[Int])
+
+@main("Результат") {
+    <h1>Кто кому дарит</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Кто</th>
+                <th>Кому</th>
+            </tr>
+        </thead>
+        <tbody>
+            @order.grouped(2).map{ case Seq(a, b) =>
+            <tr>
+                <td>@existingEmails(a)</td>
+                <td>@existingEmails(b)</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
