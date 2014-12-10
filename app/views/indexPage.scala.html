@@ -1,0 +1,36 @@
+@(email: String, error: String, existing: List[String])
+
+@main("Подарки") {
+
+    <h1>Новогодние подарки в кампусе</h1>
+
+    <blockquote>
+        <h3>Подсказка</h3>
+        <p>Введите свой Email адрес, и тогда кто-то сделает вам подарок, и вы тоже сделаете его кому-то... :-).</p>
+    </blockquote>
+
+
+    @if(error.nonEmpty) {
+        <div class="alert alert-danger">
+        @error
+        </div>
+    }
+    <form class="form-inline" role="form" action="@routes.Application.addEmail" method="POST">
+        <div class="form-group col-xs-4">
+            <label class="sr-only" for="email">Рифмуемое слово</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Введите сюда свой адрес e-mail" value="@email">
+        </div>
+        <button type="submit" class="btn btn-info">Хочу подарок!</button>
+    </form>
+
+
+    @if(existing.nonEmpty) {
+        <h3>Уже подписались</h3>
+        @for(mail <- existing) {
+            @mail </br>
+        }
+    }
+
+
+
+}
