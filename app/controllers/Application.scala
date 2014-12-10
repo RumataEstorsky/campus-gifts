@@ -1,6 +1,7 @@
 package controllers
 
 
+import java.io.{PrintWriter, File}
 import play.api.mvc._
 import views.html._
 import io.Source
@@ -35,10 +36,11 @@ object Application extends Controller {
     Ok("Перемешаны адреса")
   }
 
-  def getExistingEmails = Source.fromFile(emailsFile).getLines().toList
+  def getExistingEmails =
+    if((new File(emailsFile)).exists) Source.fromFile(emailsFile).getLines().toList
+    else List()
 
   def saveEmails(emails: List[String]) = {
-    import java.io.PrintWriter
     val out = new PrintWriter(emailsFile)
     out.write(emails.mkString("\n"))
     out.close()

@@ -26,11 +26,15 @@
 
     @if(existing.nonEmpty) {
         <h3>Уже подписались</h3>
+        <ul>
         @for(mail <- existing) {
-            @mail </br>
+            <li>@mail</li>
         }
+        </ul>
     }
 
 
+    <hr/>
+    <small>Смотри исходный код <a href="https://github.com/RumataEstorsky/campus-gifts">здесь</a></small>
 
 }
