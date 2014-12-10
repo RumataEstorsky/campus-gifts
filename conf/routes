@@ -1,5 +1,7 @@
 GET         /                    controllers.Application.index
 POST        /                    controllers.Application.addEmail
 GET         /result              controllers.Application.result
+GET         /send-mails          controllers.Application.sendMails
+
 
 GET         /assets/*file        controllers.Assets.at(path="/public", file)

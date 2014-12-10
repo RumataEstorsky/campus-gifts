@@ -2,10 +2,12 @@ package controllers
 
 
 import java.io.{PrintWriter, File}
+import play.api.Play
 import play.api.mvc._
 import views.html._
 import io.Source
 import scala.util.Random
+import play.api.Play.current
 
 object Application extends Controller {
   val emailsFile = "emails.txt"
@@ -35,11 +37,32 @@ object Application extends Controller {
   /** Action shuffle emails and decides presenter pairs */
   def result = Action {
     val existingEmails = getExistingEmails
+    Ok(resultPage(existingEmails, calculateOrder(existingEmails)))
+  }
+
+  def sendMails() = Action {
+    val existingEmails = getExistingEmails
+    calculateOrder(existingEmails).sliding(2).foreach { case Seq(from, to) =>
+      val content = letter(existingEmails(from), existingEmails(to)).toString()
+      sendMail(existingEmails(from), content)
+    }
+    Ok("Письма разосланы")
+  }
+
+
+  def sendMail(to: String, content: String) {
+    import com.typesafe.plugin._
+    val mail = use[MailerPlugin].email
+    mail.setSubject("Поздравь друга!")
+    //получатель mail.setRecipient("Peter Hausel Junior <noreply@email.com>","example@foo.com")
+    mail.setRecipient(to)
+    mail.setFrom(Play.current.configuration.getString("smtp.from").get)
+    mail.send(content)
+  }
+
+  def calculateOrder(existingEmails: List[String]) = {
     val randomNumbers = generateRandomNumbers(existingEmails.length, Seq())
-    val order = if(randomNumbers.size % 2 == 0) randomNumbers else randomNumbers :+ randomNumbers.head
-
-    Ok(resultPage(existingEmails, order))
-
+    if(randomNumbers.size % 2 == 0) randomNumbers else randomNumbers :+ randomNumbers.head
   }
 
   /** load emails from file */
