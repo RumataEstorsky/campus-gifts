@@ -1,4 +1,7 @@
-@(email: String, error: String, existing: List[String])
+@(userForm: Form[User], existing: List[String])
+
+@import helper._
+
 
 @main("Подарки") {
 
@@ -10,18 +13,24 @@
     </blockquote>
 
 
-    @if(error.nonEmpty) {
+    @if(userForm.errors.nonEmpty) {
         <div class="alert alert-danger">
-        @error
+        @userForm.errors.map{ e =>
+            @e.message
+        }
         </div>
     }
-    <form class="form-inline" role="form" action="@routes.Application.addEmail" method="POST">
+    @form(routes.Application.addEmail, 'class -> "form-inline", 'role -> "form") {
         <div class="form-group col-xs-4">
-            <label class="sr-only" for="email">Рифмуемое слово</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Введите сюда свой адрес e-mail" value="@email">
+            <label class="sr-only" for="email">Адрес</label>
+            <input  class="form-control" id="email" name="email" placeholder="Введите сюда свой адрес e-mail" value="@userForm("email").value">
+        </div>
+        <div class="form-group col-xs-4">
+            <label class="sr-only" for="name">Имя</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Введите сюда своё имя" value="@userForm("name").value">
         </div>
         <button type="submit" class="btn btn-info">Хочу подарок!</button>
-    </form>
+    }
 
 
     @if(existing.nonEmpty) {
