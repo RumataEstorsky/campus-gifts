@@ -40,7 +40,7 @@ object Users {
 
   //TODO direct insert from controller
   // TODO use User.tupled, User.unapply _)
-  def insert(email: String, name: String)(implicit s: Session) = users += User(email, name)
+  def insert(user: User)(implicit s: Session) = users += user
 
 
 }

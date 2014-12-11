@@ -32,7 +32,7 @@ object Application extends Controller {
     userForm.bindFromRequest.fold(
       formWithErrors => BadRequest(indexPage(formWithErrors, Users.getExistingUsers)),
       user => {
-        Users.insert(user.email, "Friend")
+        Users.insert(user)
         //Home.flashing("success" -> "Computer %s has been created".format(computer.name))
         Home
       }
