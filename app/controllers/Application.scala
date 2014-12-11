@@ -14,7 +14,7 @@ object Application extends Controller {
 
   val userForm = Form(
     mapping(
-      "email" -> email, //.verifying(s"""Адрес электронной почты "" уже подписан!""", email => Users.getExistingEmails.contains(email))
+      "email" -> email.verifying(s"""Такой адрес электронной почты уже подписан!""", email => !Users.getExistingEmails.contains(email)),
                         //.verifying("???", email => s"sdkjdfsk $email xdfksjfsdklj" == ""),
       "name" -> text
     )(User.apply)(User.unapply)
@@ -44,7 +44,7 @@ object Application extends Controller {
     Ok(resultPage(existingEmails, calculateOrder(existingEmails)))
   }
 
-  def sendMails() = DBAction { implicit rs =>
+  def sendMails() = Action {
     val existingEmails = Users.getExistingEmails
     calculateOrder(existingEmails).sliding(2).foreach { case Seq(from, to) =>
       val content = letter(existingEmails(from), existingEmails(to)).toString()
