@@ -1,4 +1,4 @@
-@(userForm: Form[User], existing: List[String])
+@(userForm: Form[User], existing: List[User])
 
 @import helper._
 
@@ -36,8 +36,8 @@
     @if(existing.nonEmpty) {
         <h3>Уже подписались</h3>
         <ul>
-        @for(mail <- existing) {
-            <li>@mail</li>
+        @for(user <- existing) {
+            <li>@user</li>
         }
         </ul>
 

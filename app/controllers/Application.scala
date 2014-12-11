@@ -11,6 +11,7 @@ import play.api.db.slick._
 import views.html._
 
 object Application extends Controller {
+  val Home = Redirect(routes.Application.index)
 
   val userForm = Form(
     mapping(
@@ -23,17 +24,17 @@ object Application extends Controller {
 
   /** Main page (out form email subscribing) */
   def index = DBAction { implicit rs =>
-    Ok(indexPage(userForm, Users.getExistingEmails))
+    Ok(indexPage(userForm, Users.getExistingUsers))
   }
 
   /** Processing "email adding form" */
   def addEmail = DBAction { implicit rs =>
     userForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(indexPage(formWithErrors, Users.getExistingEmails)),
+      formWithErrors => BadRequest(indexPage(formWithErrors, Users.getExistingUsers)),
       user => {
         Users.insert(user.email, "Friend")
         //Home.flashing("success" -> "Computer %s has been created".format(computer.name))
-        Redirect(routes.Application.index)
+        Home
       }
     )
   }
@@ -53,8 +54,18 @@ object Application extends Controller {
     Ok("Письма разосланы")
   }
 
+  def clear = DBAction { implicit rs =>
+    Users.clear
+    Home
+  }
 
-  def sendMail(to: String, content: String) {
+  def remove(email: String) = DBAction { implicit rs =>
+    Users.remove(email)
+    Home
+  }
+
+
+    def sendMail(to: String, content: String) {
     import com.typesafe.plugin._
     val mail = use[MailerPlugin].email
     mail.setSubject("Поздравь друга!")
