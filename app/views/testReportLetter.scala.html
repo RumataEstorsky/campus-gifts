@@ -1,0 +1,22 @@
+@(users: Seq[User])
+
+    <h1>Кто кому дарит</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Кто</th>
+                <th>Кому</th>
+            </tr>
+        </thead>
+        <tbody>
+            @users.sliding(2).map{ case Seq(from, to) =>
+            <tr>
+                <td>@from.name (@from.email)</td>
+                <td>@to.name (@to.email)</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+

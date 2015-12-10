@@ -1,7 +1,6 @@
 GET         /                    controllers.Application.index
 POST        /                    controllers.Application.addEmail
 GET         /result              controllers.Application.result
-GET         /send-mails          controllers.Application.sendMails
 GET         /clear               controllers.Application.clear
 GET         /remove/:email       controllers.Application.remove(email: String)
 

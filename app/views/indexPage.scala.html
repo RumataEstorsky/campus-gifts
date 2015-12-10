@@ -1,4 +1,4 @@
-@(userForm: Form[User], existing: List[User])
+@(userForm: Form[User], existing: List[User])(implicit flash: Flash)
 
 @import helper._
 
@@ -11,7 +11,7 @@
         <h3>Подсказка</h3>
         <p>Введите свой Email адрес, и тогда кто-то сделает вам подарок, и вы тоже сделаете его кому-то... :-).</p>
         <p>После того, как все добавятся в список, кто-то один должен нажать кнопку "Отправить письма",
-            будут рассчитаны кто кому дарит, отправлены письма. После этого <b>очищен список участников</b>!</p>
+            будут рассчитаны кто кому дарит, отправлены письма.</p>
         <p>Кнопка очистить список - очищает всех участников без рассылки писем.</p>
     </blockquote>
 
@@ -23,6 +23,13 @@
         }
         </div>
     }
+
+    @flash.get("result").map{ result =>
+        <div class="alert alert-warning">
+            @result
+        </div>
+    }
+
     @form(routes.Application.addEmail, 'class -> "form-inline", 'role -> "form") {
         <div class="form-group col-xs-4">
             <label class="sr-only" for="email">Адрес</label>
@@ -35,7 +42,6 @@
         <button type="submit" class="btn btn-info">Хочу подарок!</button>
     }
 
-
     @if(existing.nonEmpty) {
         <h3>Уже подписались</h3>
         <ul>
@@ -44,7 +50,7 @@
         }
         </ul>
 
-        <a href="@routes.Application.result" class="btn btn-warning" role="button">Отправить письма</a>
+        <a href="@routes.Application.result" class="btn btn-warning" role="button">Разыграть и отправить письма</a>
         <a href="@routes.Application.clear" class="btn btn-danger" role="button">Очистить всех</a>
     }
 

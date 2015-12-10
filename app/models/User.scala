@@ -28,7 +28,7 @@ object Users {
 
   def getExistingEmails = {
     DB.withSession { implicit session =>
-      users.map(u => u.email).list
+      users.list
     }
   }
 
