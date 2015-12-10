@@ -10,6 +10,9 @@
     <blockquote>
         <h3>Подсказка</h3>
         <p>Введите свой Email адрес, и тогда кто-то сделает вам подарок, и вы тоже сделаете его кому-то... :-).</p>
+        <p>После того, как все добавятся в список, кто-то один должен нажать кнопку "Отправить письма",
+            будут рассчитаны кто кому дарит, отправлены письма. После этого <b>очищен список участников</b>!</p>
+        <p>Кнопка очистить список - очищает всех участников без рассылки писем.</p>
     </blockquote>
 
 
@@ -41,7 +44,8 @@
         }
         </ul>
 
-        <a href="@routes.Application.result" class="btn btn-warning" role="button">Посчитатьcя</a>
+        <a href="@routes.Application.result" class="btn btn-warning" role="button">Отправить письма</a>
+        <a href="@routes.Application.clear" class="btn btn-danger" role="button">Очистить всех</a>
     }
 
 
