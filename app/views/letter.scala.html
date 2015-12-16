@@ -10,5 +10,5 @@
 Вот, для сведения, все участники твоей комнаты:
 
 @for((u, index) <- users.zipWithIndex) {
-    @index. - @u.name
+    @(index + 1). - @u.name
 }

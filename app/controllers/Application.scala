@@ -19,7 +19,7 @@ object Application extends Controller {
       "name" -> text,
       "roomLink" -> text
     )(User.apply)(User.unapply).verifying( s"""Такой адрес электронной почты уже подписан!""", fields => fields match {
-      case user => Users.getForRoom(user.roomLink).contains(user.email)
+      case user => !Users.getForRoom(user.roomLink).exists(u => u.email.toLowerCase == user.email.toLowerCase().trim)
     })
   )
 
