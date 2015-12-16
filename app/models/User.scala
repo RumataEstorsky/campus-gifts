@@ -1,22 +1,25 @@
 package models
 
-import play.api.db.slick.Config.driver.simple._
-import scala.slick.jdbc.{GetResult, StaticQuery => Q}
-import Q.interpolation
 import play.api.Play.current
+import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 
-case class User(email: String, name: String) {
+import scala.slick.jdbc.StaticQuery.interpolation
+import scala.slick.jdbc.{StaticQuery => Q}
+import scala.util.Random
+
+case class User(email: String, name: String, roomLink: String) {
   override def toString: String = s"$name - $email"
 }
 
 class UsersTable(tag: Tag) extends Table[User](tag, "users") {
 
-  def email = column[String]("email", O.PrimaryKey, O.NotNull)
+  def email = column[String]("email", O.NotNull)
   def name = column[String]("name", O.NotNull)
+  def roomLink = column[String]("room_link", O.NotNull)
 
-  def * = (email, name) <> (User.tupled, User.unapply _)
-
+  def * = (email, name, roomLink) <> (User.tupled, User.unapply _)
+  def uniqRoomEmail = index("uniq_room_email", (roomLink, email), unique = true)
 
 }
 
@@ -26,21 +29,19 @@ object Users {
 
   def count(implicit s: Session): Int = sql"SELECT COUNT(*) FROM users".as[Int].first
 
-  def getExistingEmails = {
+  def getForRoom(roomLink: String) = {
     DB.withSession { implicit session =>
-      users.list
+      users.filter(u => u.roomLink === roomLink).list
     }
   }
 
-  def getExistingUsers(implicit s: Session) = users.list
+  def clearAllInRoom(roomLink: String)(implicit s: Session) = users.filter(u => u.roomLink === roomLink).delete
 
-  def clear(implicit s: Session) =  (Q.u + "DELETE FROM users").execute
+  def remove(roomLink: String,email: String)(implicit s: Session) =
+    users.filter(u => u.roomLink === roomLink && u.email === email).delete
 
-  def remove(email: String)(implicit s: Session) =  sqlu"DELETE FROM users WHERE email ='#$email'".execute
-
-  //TODO direct insert from controller
-  // TODO use User.tupled, User.unapply _)
   def insert(user: User)(implicit s: Session) = users += user
 
+  def generateRoomLink(n: Int) = (1 to n).map{x => (Random.nextInt('z' - 'a') + 'a').toChar}.mkString
 
 }

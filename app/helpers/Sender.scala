@@ -14,15 +14,14 @@ object Sender {
   val testEmail = "valera.dt@gmail.com"
 
   def sendMailToAllCurrentUsers(existingUsers: List[User]) = {
-    val existingEmails = Users.getExistingEmails
-    if (existingEmails.nonEmpty) {
+    if (existingUsers.nonEmpty) {
       val mixedUsers = calculateOrder(existingUsers)
       val testReport = testReportLetter(mixedUsers)
 
       sendTestReport(testReport)
 
       mixedUsers.sliding(2).foreach { case Seq(from, to) =>
-        val content = letter(from, to).toString()
+        val content = letter(from, to, existingUsers).toString()
         sendMail(from.email, content)
       }
 
@@ -58,7 +57,7 @@ object Sender {
   def sendTestReport(content: Html) {
     import com.typesafe.plugin._
     val mail = use[MailerPlugin].email
-    mail.setSubject("Тест работы Кампус-подарок")
+    mail.setSubject("Тест работы викторины подарков")
     mail.setRecipient(testEmail)
     mail.setFrom(Play.current.configuration.getString("smtp.from").get)
     mail.sendHtml(content.toString)

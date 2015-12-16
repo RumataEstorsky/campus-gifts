@@ -1,8 +1,10 @@
-GET         /                    controllers.Application.index
-POST        /                    controllers.Application.addEmail
-GET         /result              controllers.Application.result
-GET         /clear               controllers.Application.clear
-GET         /remove/:email       controllers.Application.remove(email: String)
+GET         /                               controllers.Application.index
+GET         /room/create                    controllers.Application.createRoom
+GET         /room/:roomLink                 controllers.Application.room(roomLink: String)
+POST        /room/:roomLink                 controllers.Application.addEmail(roomLink: String)
+GET         /room/remove-email/:email       controllers.Application.removeEmail(roomLink: String, email: String)
+GET         /room/:roomLink/result          controllers.Application.result(roomLink: String)
+GET         /room                           controllers.Application.removeRoom(roomLink: String)
 
 
 GET         /assets/*file        controllers.Assets.at(path="/public", file)

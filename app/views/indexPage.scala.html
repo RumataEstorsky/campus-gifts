@@ -1,61 +1,23 @@
-@(userForm: Form[User], existing: List[User])(implicit flash: Flash)
-
-@import helper._
-
+@()
 
 @main("Подарки") {
 
-    <h1>Новогодние подарки в кампусе</h1>
+    <h1>Викторина подарков</h1>
 
     <blockquote>
-        <h3>Подсказка</h3>
-        <p>Введите свой Email адрес, и тогда кто-то сделает вам подарок, и вы тоже сделаете его кому-то... :-).</p>
-        <p>После того, как все добавятся в список, кто-то один должен нажать кнопку "Отправить письма",
-            будут рассчитаны кто кому дарит, отправлены письма.</p>
-        <p>Кнопка очистить список - очищает всех участников без рассылки писем.</p>
+        <h3>Пояснение</h3>
+        <p>Эта интересная викторина поможет весело провести время вам и вашим друзьям.</p>
+        <p>Идея в том, что в кругу каждый человек дарит одному другому подарок,
+            но до момента вручения подарков никто не знает кто кому будет дарить подарок.</p>
+        <p>1. Вы создаёте "комнату" для своей компании и получаете ссылку. По этой ссылке все друзья вносят свои имена и электронную почту</p>
+        <p>2. Кто-то один из вашей компании нажимает кнопку "разослать письма" и программа отправит письмо каждому участнику
+           викторины, в котором будет указано кому тот должен подарить подарок. При этом даже создатель комнаты не знает кто-кому дарит подарки.</p>
+        <p>И так, хватит слов, за дело! Нажимайте на кнопку внизу</p>
     </blockquote>
 
 
-    @if(userForm.errors.nonEmpty) {
-        <div class="alert alert-danger">
-        @userForm.errors.map{ e =>
-            @e.message
-        }
-        </div>
-    }
 
-    @flash.get("result").map{ result =>
-        <div class="alert alert-warning">
-            @result
-        </div>
-    }
+        <a href="@routes.Application.createRoom" class="btn btn-info btn-lg" role="button">Создать комнату для викторины</a>
 
-    @form(routes.Application.addEmail, 'class -> "form-inline", 'role -> "form") {
-        <div class="form-group col-xs-4">
-            <label class="sr-only" for="email">Адрес</label>
-            <input  class="form-control" id="email" name="email" placeholder="Введите сюда свой адрес e-mail" value="@userForm("email").value">
-        </div>
-        <div class="form-group col-xs-4">
-            <label class="sr-only" for="name">Имя</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="Введите сюда своё имя" value="@userForm("name").value">
-        </div>
-        <button type="submit" class="btn btn-info">Хочу подарок!</button>
-    }
-
-    @if(existing.nonEmpty) {
-        <h3>Уже подписались</h3>
-        <ul>
-        @for(user <- existing) {
-            <li>@user</li>
-        }
-        </ul>
-
-        <a href="@routes.Application.result" class="btn btn-warning" role="button">Разыграть и отправить письма</a>
-        <a href="@routes.Application.clear" class="btn btn-danger" role="button">Очистить всех</a>
-    }
-
-
-    <hr/>
-    <small>Смотри исходный код <a href="https://github.com/RumataEstorsky/campus-gifts">здесь</a></small>
-
+   @about()
 }

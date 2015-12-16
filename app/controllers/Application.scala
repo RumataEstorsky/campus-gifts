@@ -15,47 +15,57 @@ object Application extends Controller {
 
   val userForm = Form(
     mapping(
-      "email" -> email.verifying( s"""Такой адрес электронной почты уже подписан!""", email => !Users.getExistingEmails.contains(email)),
-      //.verifying("???", email => s"sdkjdfsk $email xdfksjfsdklj" == ""),
-      "name" -> text
-    )(User.apply)(User.unapply)
+      "email" -> email,
+      "name" -> text,
+      "roomLink" -> text
+    )(User.apply)(User.unapply).verifying( s"""Такой адрес электронной почты уже подписан!""", fields => fields match {
+      case user => Users.getForRoom(user.roomLink).contains(user.email)
+    })
   )
 
 
   /** Main page (out form email subscribing) */
   def index = DBAction { implicit rs =>
-    Ok(indexPage(userForm, Users.getExistingUsers))
+    Ok(indexPage())
   }
 
+  def createRoom = Action {
+    Redirect(routes.Application.room(Users.generateRoomLink(13)))
+  }
+
+  def room(roomLink: String) = DBAction { implicit rs =>
+    Ok(roomPage(roomLink, userForm, Users.getForRoom(roomLink)))
+  }
+
+
   /** Processing "email adding form" */
-  def addEmail = DBAction { implicit rs =>
+  def addEmail(roomLink: String) = DBAction { implicit rs =>
     userForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(indexPage(formWithErrors, Users.getExistingUsers)),
+      formWithErrors => BadRequest(roomPage(roomLink, formWithErrors, Users.getForRoom(roomLink))),
       user => {
         Users.insert(user)
-        //Home.flashing("success" -> "Computer %s has been created".format(computer.name))
-        Home
+        Redirect(routes.Application.room(roomLink))
       }
     )
   }
 
   /** Action shuffle emails and decides presenter pairs */
-  def result = DBAction { implicit rs =>
-    val existingEmails = Users.getExistingEmails
+  def result(roomLink: String) = DBAction { implicit rs =>
+    val existingEmails = Users.getForRoom(roomLink)
     Sender.sendMailToAllCurrentUsers(existingEmails)
-    Redirect(routes.Application.index())
-      .flashing("result" -> "Все письма были успешно разосланы, теперь можете нажать кнопку очистить список!")
+//    Redirect(routes.Application.index()).flashing("result" -> "Все письма были успешно разосланы, теперь можете нажать кнопку очистить список!")
+    Redirect(routes.Application.removeRoom(roomLink))
   }
 
 
-  def clear = DBAction { implicit rs =>
-    Users.clear
+  def removeRoom(roomLink: String) = DBAction { implicit rs =>
+    Users.clearAllInRoom(roomLink)
     Home
   }
 
-  def remove(email: String) = DBAction { implicit rs =>
-    Users.remove(email)
-    Home
+  def removeEmail(roomLink: String, email: String) = DBAction { implicit rs =>
+    Users.remove(roomLink, email)
+    Redirect(routes.Application.room(roomLink))
   }
 
 }

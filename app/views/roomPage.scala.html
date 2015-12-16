@@ -1,0 +1,76 @@
+@(roomLink: String,  userForm: Form[User], existing: List[User])(implicit flash: Flash)
+
+@import helper._
+
+
+@main("Подарки") {
+
+    <h1>Викторина подарков</h1>
+
+    <h3>Ссылка на эту комнату
+        <a href="campus-gifts.herokuapp.com@routes.Application.room(roomLink)">
+            http://campus-gifts.herokuapp.com@routes.Application.room(roomLink)
+        </a>
+    </h3>
+
+    <blockquote>
+        <h3>Подсказка</h3>
+        <p>Поздравляем, вы создали свою комнату и теперь можете поделиться этой ссылкой со своими друзьями, среди которых будет разыграны подарки!</p>
+        <p>После того, как все добавятся в список, кто-то один должен нажать кнопку "Отправить письма",
+            будет рассчитано кто кому дарит и отправлены письма.
+            После рассылки писем комната будет <b>удалена автоматически</b>!
+        </p>
+
+        <p>Кнопка "Удалить комнату" - очищает всех участников без рассылки писем.</p>
+
+        <p><b>Внимание! Перепроверьте свой e-mail после ввода, иначе вам не придёт письмо (это подведёт всех участников)!
+        </b></p>
+    </blockquote>
+
+
+    @if(userForm.errors.nonEmpty) {
+        <div class="alert alert-danger">
+        @userForm.errors.map{ e =>
+            @e.message
+        }
+        </div>
+    }
+
+    @flash.get("result").map{ result =>
+        <div class="alert alert-warning">
+            @result
+        </div>
+    }
+
+    @form(routes.Application.addEmail(roomLink), 'class -> "form-inline", 'role -> "form") {
+        <div class="form-group col-xs-4">
+            <label class="sr-only" for="email">Адрес</label>
+            <input  class="form-control" id="email" name="email" placeholder="Введите сюда свой адрес e-mail" value="@userForm("email").value">
+        </div>
+        <div class="form-group col-xs-4">
+            <label class="sr-only" for="name">Имя</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Введите сюда своё имя" value="@userForm("name").value">
+        </div>
+
+        <input type="hidden" id="roomLink" name="roomLink" value="@roomLink">
+        <button type="submit" class="btn btn-info">Хочу подарок!</button>
+    }
+
+    @if(existing.nonEmpty) {
+        <h3>Уже подписались</h3>
+        <ul>
+        @for(user <- existing) {
+            <li>@user <a href="@routes.Application.removeEmail(roomLink, user.email)">Отписать</a></li>
+        }
+        </ul>
+
+        <div>
+            <a href="@routes.Application.result(roomLink)" class="btn btn-warning" role="button">Разыграть и отправить письма</a>
+            <a href="@routes.Application.removeRoom(roomLink)" class="btn btn-danger" role="button">Удалить комнату</a>
+        </div>
+    }
+
+
+    @about()
+
+}
