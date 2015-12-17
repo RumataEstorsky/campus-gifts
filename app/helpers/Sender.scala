@@ -31,7 +31,7 @@ object Sender {
   /** returns mixed users by special gift-algorithm */
   def calculateOrder(existingUsers: List[User]) = {
     val randomNumbers = generateRandomNumbers(existingUsers.length, Seq())
-    if (randomNumbers.size % 2 == 0) randomNumbers else randomNumbers :+ randomNumbers.head
+    randomNumbers :+ randomNumbers.head
   }.map(index => existingUsers(index))
 
   /** generate random numbers from 0 to n, without duplicates */
